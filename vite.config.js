@@ -1,13 +1,8 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
+  base: '/my-portfolio/', // 👈 VERY IMPORTANT!
   plugins: [react()],
-  build: {
-    outDir: 'dist',  // Specifies the output folder for the build
-    rollupOptions: {
-      input: './index.html',  // Ensure this points to the correct HTML file
-    },
-  },
 })
