@@ -9,8 +9,8 @@ function Header() {
 
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ function Header() {
 
   return (
     <>
-      {/* Background */}
+      {/* Background blob */}
       <div style={{
         backgroundColor: "#050414",
         position: "fixed",
@@ -36,7 +36,10 @@ function Header() {
       }}>
         <div style={{
           position: "absolute",
-          top: 0, left: 0, width: "100%", height: "100%",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
           backgroundColor: "#a855f7",
           borderRadius: "9999px",
           opacity: 0.25,
@@ -47,7 +50,8 @@ function Header() {
 
       {/* Grid overlay */}
       <div style={{
-        position: "fixed", inset: 0,
+        position: "fixed",
+        inset: 0,
         backgroundImage:
           "linear-gradient(to right, #ffffff0f 1px, transparent 1px), linear-gradient(to bottom, #ffffff0f 1px, transparent 1px)",
         backgroundSize: "16px 24px",
@@ -58,10 +62,11 @@ function Header() {
         zIndex: -9
       }} />
 
-      {/* Navigation */}
+      {/* Navigation Bar */}
       <nav style={{
         position: "fixed",
-        top: 0, left: 0,
+        top: 0,
+        left: 0,
         width: "100%",
         padding: isMobile ? "1rem 5vw" : "1rem 7vw",
         background: "rgba(5, 4, 20, 0.8)",
@@ -72,7 +77,8 @@ function Header() {
         display: "flex",
         flexDirection: isMobile ? "column" : "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: isMobile ? "flex-start" : "center",
+        gap: isMobile ? "1rem" : 0
       }}>
         {/* Logo */}
         <div
@@ -82,7 +88,7 @@ function Header() {
             display: "flex",
             alignItems: "center",
             cursor: "pointer",
-            marginBottom: isMobile ? "1rem" : 0
+            transition: "transform 0.3s ease"
           }}
           onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05) rotate(-1deg)")}
           onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1) rotate(0)")}
@@ -94,23 +100,28 @@ function Header() {
           <span style={{ color: "#8245ec" }}>&gt;</span>
         </div>
 
-        {/* Hamburger toggle on mobile */}
+        {/* Hamburger Menu (Mobile Only) */}
         {isMobile && (
-          <div onClick={() => setMobileMenuOpen(prev => !prev)} style={{ cursor: "pointer", alignSelf: "flex-end" }}>
-            {mobileMenuOpen ? <FiX size={24} color="#8245ec" /> : <FiMenu size={24} color="#8245ec" />}
+          <div
+            onClick={() => setMobileMenuOpen(prev => !prev)}
+            style={{ cursor: "pointer", alignSelf: "flex-end" }}
+          >
+            {mobileMenuOpen
+              ? <FiX size={24} color="#8245ec" />
+              : <FiMenu size={24} color="#8245ec" />}
           </div>
         )}
 
-        {/* Nav Items */}
+        {/* Navigation Links */}
         <ul style={{
           display: isMobile ? (mobileMenuOpen ? "flex" : "none") : "flex",
           flexDirection: isMobile ? "column" : "row",
           alignItems: isMobile ? "flex-start" : "center",
-          gap: isMobile ? "1rem" : "2rem",
-          marginTop: isMobile ? "1rem" : 0,
-          marginBottom: isMobile ? "1rem" : 0,
+          gap: isMobile ? "0.75rem" : "2rem",
+          margin: 0,
           padding: 0,
-          listStyle: "none"
+          listStyle: "none",
+          width: isMobile ? "100%" : "auto"
         }}>
           {navItems.map((item) => (
             <li
@@ -143,15 +154,31 @@ function Header() {
         <div style={{
           display: "flex",
           gap: "1rem",
-          alignItems: "center"
+          alignItems: "center",
+          justifyContent: isMobile ? "flex-start" : "flex-end",
+          width: isMobile ? "100%" : "auto"
         }}>
-          <a href="https://github.com/hardeekhd" target="_blank" rel="noopener noreferrer" style={{ color: "#ccc" }}><FaGithub /></a>
-          <a href="https://linkedin.com/in/hardeek-khadilkar-0098681b7" target="_blank" rel="noopener noreferrer" style={{ color: "#ccc" }}><FaLinkedin /></a>
+          <a
+            href="https://github.com/hardeekhd"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#ccc" }}
+          >
+            <FaGithub />
+          </a>
+          <a
+            href="https://linkedin.com/in/hardeek-khadilkar-0098681b7"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#ccc" }}
+          >
+            <FaLinkedin />
+          </a>
         </div>
       </nav>
 
-      {/* Add padding top to avoid overlap */}
-      <div style={{ paddingTop: "100px" }}></div>
+      {/* Padding to prevent content from hiding behind navbar */}
+      <div style={{ paddingTop: "100px" }} />
     </>
   );
 }
