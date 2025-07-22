@@ -2611,32 +2611,3 @@ html {
 .animate-fadeInUp {
   animation: fadeInUp 0.8s ease-out forwards;
 }
-/* style.css */
-
-/* Mobile First */
-.nav-links {
-  display: none;
-  flex-direction: column;
-  gap: 1.5rem;
-  position: absolute;
-  top: 60px;
-  right: 1.5rem;
-  background: rgba(5, 4, 20, 0.95);
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Show nav-links horizontally on medium+ screens */
-@media (min-width: 768px) {
-  .nav-links {
-    display: flex !important;
-    position: static;
-    flex-direction: row;
-    background: none;
-    padding: 0;
-    box-shadow: none;
-  }
-}

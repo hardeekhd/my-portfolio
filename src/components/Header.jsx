@@ -1,15 +1,25 @@
 import '../style.css';
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { FiMenu, FiX } from "react-icons/fi"; // For better icons
+import { FiMenu, FiX } from "react-icons/fi";
 
 function Header() {
   const [darkMode, setDarkMode] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  // Update screen width on resize
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
+
+  const isMobile = screenWidth < 768;
 
   const navItems = [
     "About", "Education", "Projects",
@@ -44,8 +54,9 @@ function Header() {
       {/* Navigation Bar */}
       <div style={{ paddingTop: "5rem", position: "relative" }}>
         <nav style={{
-          position: "fixed", top: 0, width: "100%", padding: "1rem 7vw",
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          position: "fixed", top: 0, width: "100%", padding: isMobile ? "1rem 5vw" : "1rem 7vw",
+          display: "flex", flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between", alignItems: "center",
           background: "rgba(5, 4, 20, 0.8)", backdropFilter: "blur(12px)",
           borderBottom: "1px solid #29293c", boxShadow: "0 0 10px rgba(0,0,0,0.3)",
           zIndex: 50
@@ -54,7 +65,8 @@ function Header() {
           <div
             style={{
               fontSize: "1.25rem", fontWeight: "bold", display: "flex",
-              alignItems: "center", cursor: "pointer", transition: "transform 0.3s ease"
+              alignItems: "center", cursor: "pointer", transition: "transform 0.3s ease",
+              marginBottom: isMobile ? "1rem" : 0
             }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05) rotate(-1deg)")}
             onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1) rotate(0)")}
@@ -67,15 +79,28 @@ function Header() {
           </div>
 
           {/* Nav Links */}
-          <ul className="nav-links" style={{ display: mobileMenuOpen ? 'flex' : undefined }}>
+          <ul style={{
+            display: isMobile ? (mobileMenuOpen ? "flex" : "none") : "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: isMobile ? "1rem" : "2rem",
+            fontSize: "0.875rem",
+            fontWeight: 500,
+            alignItems: isMobile ? "flex-start" : "center",
+            color: "#ccc",
+            marginBottom: isMobile ? "1rem" : 0
+          }}>
             {navItems.map((item) => (
               <li
                 key={item}
-                style={{ cursor: "pointer", transition: "0.3s", color: "#ccc" }}
+                style={{
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  color: "#ccc"
+                }}
                 onClick={() => {
                   const el = document.getElementById(item.toLowerCase());
                   if (el) el.scrollIntoView({ behavior: "smooth" });
-                  setMobileMenuOpen(false); // close menu on click
+                  setMobileMenuOpen(false);
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "#bb86fc";
@@ -91,15 +116,21 @@ function Header() {
             ))}
           </ul>
 
-          {/* Social Icons */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <a href="https://github.com/hardeekhd" target="_blank" style={{ color: "#ccc" }}><FaGithub /></a>
-            <a href="https://linkedin.com/in/hardeek-khadilkar-0098681b7" target="_blank" style={{ color: "#ccc" }}><FaLinkedin /></a>
+          {/* Social Icons + Mobile Toggle */}
+          <div style={{
+            display: "flex", alignItems: "center",
+            justifyContent: isMobile ? "space-between" : "flex-end",
+            width: isMobile ? "100%" : "auto"
+          }}>
+            <a href="https://github.com/hardeekhd" target="_blank" rel="noopener noreferrer" style={{ color: "#ccc", marginRight: "1rem" }}><FaGithub /></a>
+            <a href="https://linkedin.com/in/hardeek-khadilkar-0098681b7" target="_blank" rel="noopener noreferrer" style={{ color: "#ccc", marginRight: "1rem" }}><FaLinkedin /></a>
 
-            {/* Hamburger Menu Toggle */}
-            <div className="md:hidden" onClick={() => setMobileMenuOpen(prev => !prev)}>
-              {mobileMenuOpen ? <FiX size={24} color="#8245ec" /> : <FiMenu size={24} color="#8245ec" />}
-            </div>
+            {/* Hamburger */}
+            {isMobile && (
+              <div onClick={() => setMobileMenuOpen(prev => !prev)} style={{ cursor: "pointer" }}>
+                {mobileMenuOpen ? <FiX size={24} color="#8245ec" /> : <FiMenu size={24} color="#8245ec" />}
+              </div>
+            )}
           </div>
         </nav>
       </div>
