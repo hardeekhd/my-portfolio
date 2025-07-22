@@ -1,4 +1,3 @@
-import '../style.css';
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
