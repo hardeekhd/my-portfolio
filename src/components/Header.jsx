@@ -1,13 +1,12 @@
 import '../style.css';
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { SunIcon, MoonIcon } from "@heroicons/react/outline";
+import { SunIcon, MoonIcon, XIcon, MenuIcon } from "@heroicons/react/outline";
 
 function Header() {
   const [darkMode, setDarkMode] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
-  const [hydrated, setHydrated] = useState(false); // prevent hydration issues
 
   const navItems = [
     "About",
@@ -20,23 +19,9 @@ function Header() {
   ];
 
   useEffect(() => {
-    // Hydration fix (runs only on client)
-    setHydrated(true);
-
-    // Initial mobile check
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-
-    // Toggle dark mode
     document.documentElement.classList.toggle("dark", darkMode);
 
-    // Scroll section observer
+    // Active section tracking
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
@@ -47,13 +32,11 @@ function Header() {
       },
       { threshold: 0.6 }
     );
+
     const sections = document.querySelectorAll("section");
     sections.forEach(section => observer.observe(section));
     return () => observer.disconnect();
-  }, [darkMode, hydrated]);
-
-  // 🚫 Hide entire header if mobile and hydrated
-  if (!hydrated || isMobile) return null;
+  }, [darkMode]);
 
   const styles = {
     blob: {
@@ -85,7 +68,7 @@ function Header() {
       position: "fixed",
       top: 0,
       width: "100%",
-      padding: "1rem 5vw",
+      padding: "1rem 7vw",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
@@ -95,7 +78,7 @@ function Header() {
       zIndex: 50
     },
     logo: {
-      fontSize: "1.5rem",
+      fontSize: "1.25rem",
       fontWeight: "bold",
       display: "flex",
       alignItems: "center",
@@ -104,14 +87,12 @@ function Header() {
     },
     link: {
       cursor: "pointer",
-      transition: "all 0.3s ease",
-      margin: "0 0.5rem",
-      fontSize: "1rem"
+      transition: "all 0.3s ease"
     },
     socialIcon: {
       color: "#ccc",
       fontSize: "1.25rem",
-      marginLeft: "0.75rem",
+      marginLeft: "1rem",
       transition: "all 0.3s ease"
     },
     iconHover: {
@@ -123,11 +104,13 @@ function Header() {
 
   return (
     <>
+      {/* Background */}
       <div style={{ backgroundColor: "#050414", position: "relative", height: "100%" }}>
         <div style={styles.blob}></div>
       </div>
       <div style={styles.gridOverlay}></div>
 
+      {/* Nav */}
       <div style={{ paddingTop: "5rem", position: "relative" }}>
         <nav style={styles.navContainer}>
           {/* Logo */}
@@ -152,15 +135,7 @@ function Header() {
           </div>
 
           {/* Desktop Nav */}
-          <ul style={{
-            display: "flex",
-            gap: "1.5rem",
-            fontSize: "0.875rem",
-            fontWeight: "500",
-            color: "#ccc",
-            marginLeft: "1rem",
-            listStyleType: "none"
-          }}>
+          <ul className="hidden md:flex gap-6 text-sm font-medium text-gray-300">
             {navItems.map((item) => (
               <li
                 key={item}
@@ -187,8 +162,9 @@ function Header() {
             ))}
           </ul>
 
-          {/* Right Icons */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          {/* Icons & Mobile */}
+          <div className="flex items-center gap-3">
+            {/* Dark Mode */}
             <button onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? (
                 <SunIcon className="h-6 w-6 text-yellow-400" />
@@ -197,6 +173,7 @@ function Header() {
               )}
             </button>
 
+            {/* Social */}
             <a
               href="https://github.com/hardeekhd"
               target="_blank"
@@ -217,8 +194,38 @@ function Header() {
             >
               <FaLinkedin />
             </a>
+
+            {/* Mobile Menu Toggle */}
+            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? (
+                <XIcon className="h-6 w-6 text-purple-400" />
+              ) : (
+                <MenuIcon className="h-6 w-6 text-purple-400" />
+              )}
+            </button>
           </div>
         </nav>
+
+        {/* Mobile Drawer */}
+        {mobileOpen && (
+          <div className="md:hidden absolute top-20 left-0 w-full bg-[#0e0e1a] text-white z-40 shadow-lg px-6 py-4 space-y-4 transition-all">
+            {navItems.map((item) => (
+              <div
+                key={item}
+                onClick={() => {
+                  const el = document.getElementById(item.toLowerCase());
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                  setMobileOpen(false);
+                }}
+                className={`cursor-pointer text-base font-medium ${
+                  activeSection === item.toLowerCase() ? "text-purple-400" : "text-gray-300"
+                }`}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
