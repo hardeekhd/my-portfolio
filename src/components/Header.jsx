@@ -21,7 +21,6 @@ function Header() {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
 
-    // Active section tracking
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
@@ -37,6 +36,8 @@ function Header() {
     sections.forEach(section => observer.observe(section));
     return () => observer.disconnect();
   }, [darkMode]);
+
+  const isMobile = window.innerWidth < 768;
 
   const styles = {
     blob: {
@@ -68,17 +69,18 @@ function Header() {
       position: "fixed",
       top: 0,
       width: "100%",
-      padding: "1rem 7vw",
+      padding: "1rem 5vw",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       background: "rgba(5, 4, 20, 0.8)",
       backdropFilter: "blur(12px)",
       borderBottom: "1px solid #29293c",
-      zIndex: 50
+      zIndex: 50,
+      flexWrap: "wrap"
     },
     logo: {
-      fontSize: "1.25rem",
+      fontSize: isMobile ? "1.2rem" : "1.5rem",
       fontWeight: "bold",
       display: "flex",
       alignItems: "center",
@@ -87,12 +89,14 @@ function Header() {
     },
     link: {
       cursor: "pointer",
-      transition: "all 0.3s ease"
+      transition: "all 0.3s ease",
+      margin: "0 0.5rem",
+      fontSize: isMobile ? "0.875rem" : "1rem"
     },
     socialIcon: {
       color: "#ccc",
-      fontSize: "1.25rem",
-      marginLeft: "1rem",
+      fontSize: isMobile ? "1rem" : "1.25rem",
+      marginLeft: "0.75rem",
       transition: "all 0.3s ease"
     },
     iconHover: {
@@ -104,13 +108,11 @@ function Header() {
 
   return (
     <>
-      {/* Background */}
       <div style={{ backgroundColor: "#050414", position: "relative", height: "100%" }}>
         <div style={styles.blob}></div>
       </div>
       <div style={styles.gridOverlay}></div>
 
-      {/* Nav */}
       <div style={{ paddingTop: "5rem", position: "relative" }}>
         <nav style={styles.navContainer}>
           {/* Logo */}
@@ -135,7 +137,15 @@ function Header() {
           </div>
 
           {/* Desktop Nav */}
-          <ul className="hidden md:flex gap-6 text-sm font-medium text-gray-300">
+          <ul style={{
+            display: isMobile ? "none" : "flex",
+            gap: "1.5rem",
+            fontSize: "0.875rem",
+            fontWeight: "500",
+            color: "#ccc",
+            marginLeft: "1rem",
+            listStyleType: "none"
+          }}>
             {navItems.map((item) => (
               <li
                 key={item}
@@ -162,9 +172,8 @@ function Header() {
             ))}
           </ul>
 
-          {/* Icons & Mobile */}
-          <div className="flex items-center gap-3">
-            {/* Dark Mode */}
+          {/* Right Icons */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <button onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? (
                 <SunIcon className="h-6 w-6 text-yellow-400" />
@@ -173,7 +182,6 @@ function Header() {
               )}
             </button>
 
-            {/* Social */}
             <a
               href="https://github.com/hardeekhd"
               target="_blank"
@@ -196,7 +204,7 @@ function Header() {
             </a>
 
             {/* Mobile Menu Toggle */}
-            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+            <button style={{ display: isMobile ? "block" : "none" }} onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? (
                 <XIcon className="h-6 w-6 text-purple-400" />
               ) : (
@@ -207,8 +215,23 @@ function Header() {
         </nav>
 
         {/* Mobile Drawer */}
-        {mobileOpen && (
-          <div className="md:hidden absolute top-20 left-0 w-full bg-[#0e0e1a] text-white z-40 shadow-lg px-6 py-4 space-y-4 transition-all">
+        {mobileOpen && isMobile && (
+          <div
+            style={{
+              position: "absolute",
+              top: "5rem",
+              left: 0,
+              width: "100%",
+              backgroundColor: "#0e0e1a",
+              color: "#fff",
+              zIndex: 40,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+              padding: "1rem 1.5rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem"
+            }}
+          >
             {navItems.map((item) => (
               <div
                 key={item}
@@ -217,9 +240,12 @@ function Header() {
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                   setMobileOpen(false);
                 }}
-                className={`cursor-pointer text-base font-medium ${
-                  activeSection === item.toLowerCase() ? "text-purple-400" : "text-gray-300"
-                }`}
+                style={{
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  color: activeSection === item.toLowerCase() ? "#a855f7" : "#ccc"
+                }}
               >
                 {item}
               </div>
