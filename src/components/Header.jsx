@@ -7,6 +7,7 @@ function Header() {
   const [darkMode, setDarkMode] = useState(true);
   const [activeSection, setActiveSection] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [hydrated, setHydrated] = useState(false); // prevent hydration issues
 
   const navItems = [
     "About",
@@ -19,10 +20,23 @@ function Header() {
   ];
 
   useEffect(() => {
-    // Set dark mode
+    // Hydration fix (runs only on client)
+    setHydrated(true);
+
+    // Initial mobile check
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    // Toggle dark mode
     document.documentElement.classList.toggle("dark", darkMode);
 
-    // Section observer
+    // Scroll section observer
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
@@ -36,18 +50,10 @@ function Header() {
     const sections = document.querySelectorAll("section");
     sections.forEach(section => observer.observe(section));
     return () => observer.disconnect();
-  }, [darkMode]);
+  }, [darkMode, hydrated]);
 
-  useEffect(() => {
-    // Responsive check
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // ❌ Hide Header on mobile
-  if (isMobile) return null;
+  // 🚫 Hide entire header if mobile and hydrated
+  if (!hydrated || isMobile) return null;
 
   const styles = {
     blob: {
