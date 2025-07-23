@@ -6,6 +6,7 @@ import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 function Header() {
   const [darkMode, setDarkMode] = useState(true);
   const [activeSection, setActiveSection] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
 
   const navItems = [
     "About",
@@ -18,8 +19,10 @@ function Header() {
   ];
 
   useEffect(() => {
+    // Set dark mode
     document.documentElement.classList.toggle("dark", darkMode);
 
+    // Section observer
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
@@ -30,14 +33,21 @@ function Header() {
       },
       { threshold: 0.6 }
     );
-
     const sections = document.querySelectorAll("section");
     sections.forEach(section => observer.observe(section));
     return () => observer.disconnect();
   }, [darkMode]);
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  if (isMobile) return null; // ❌ Don’t render Header on mobile
+  useEffect(() => {
+    // Responsive check
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // ❌ Hide Header on mobile
+  if (isMobile) return null;
 
   const styles = {
     blob: {

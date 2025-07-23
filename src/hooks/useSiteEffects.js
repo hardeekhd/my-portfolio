@@ -7,6 +7,11 @@ export function useSiteEffects() {
 
     const nav = document.querySelector("nav");
 
+    // ✅ Hide <nav> on mobile screens
+    if (nav && window.innerWidth < 768) {
+      nav.style.display = "none";
+    }
+
     // 1. Smooth Scroll via nav buttons (Desktop only)
     if (isDesktop && nav) {
       const navClickHandler = (e) => {
