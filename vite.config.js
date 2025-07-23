@@ -3,6 +3,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/my-portfolio/', // 👈 VERY IMPORTANT!
+  base: '/', // ✅ Important for Vercel!
   plugins: [react()],
 })
