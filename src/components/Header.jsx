@@ -1,11 +1,10 @@
 import '../style.css';
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { SunIcon, MoonIcon, XIcon, MenuIcon } from "@heroicons/react/outline";
+import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 
 function Header() {
   const [darkMode, setDarkMode] = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
   const navItems = [
@@ -37,7 +36,8 @@ function Header() {
     return () => observer.disconnect();
   }, [darkMode]);
 
-  const isMobile = window.innerWidth < 768;
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  if (isMobile) return null; // ❌ Don’t render Header on mobile
 
   const styles = {
     blob: {
@@ -76,11 +76,10 @@ function Header() {
       background: "rgba(5, 4, 20, 0.8)",
       backdropFilter: "blur(12px)",
       borderBottom: "1px solid #29293c",
-      zIndex: 50,
-      flexWrap: "wrap"
+      zIndex: 50
     },
     logo: {
-      fontSize: isMobile ? "1.2rem" : "1.5rem",
+      fontSize: "1.5rem",
       fontWeight: "bold",
       display: "flex",
       alignItems: "center",
@@ -91,11 +90,11 @@ function Header() {
       cursor: "pointer",
       transition: "all 0.3s ease",
       margin: "0 0.5rem",
-      fontSize: isMobile ? "0.875rem" : "1rem"
+      fontSize: "1rem"
     },
     socialIcon: {
       color: "#ccc",
-      fontSize: isMobile ? "1rem" : "1.25rem",
+      fontSize: "1.25rem",
       marginLeft: "0.75rem",
       transition: "all 0.3s ease"
     },
@@ -138,7 +137,7 @@ function Header() {
 
           {/* Desktop Nav */}
           <ul style={{
-            display: isMobile ? "none" : "flex",
+            display: "flex",
             gap: "1.5rem",
             fontSize: "0.875rem",
             fontWeight: "500",
@@ -202,56 +201,8 @@ function Header() {
             >
               <FaLinkedin />
             </a>
-
-            {/* Mobile Menu Toggle */}
-            <button style={{ display: isMobile ? "block" : "none" }} onClick={() => setMobileOpen(!mobileOpen)}>
-              {mobileOpen ? (
-                <XIcon className="h-6 w-6 text-purple-400" />
-              ) : (
-                <MenuIcon className="h-6 w-6 text-purple-400" />
-              )}
-            </button>
           </div>
         </nav>
-
-        {/* Mobile Drawer */}
-        {mobileOpen && isMobile && (
-          <div
-            style={{
-              position: "absolute",
-              top: "5rem",
-              left: 0,
-              width: "100%",
-              backgroundColor: "#0e0e1a",
-              color: "#fff",
-              zIndex: 40,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-              padding: "1rem 1.5rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem"
-            }}
-          >
-            {navItems.map((item) => (
-              <div
-                key={item}
-                onClick={() => {
-                  const el = document.getElementById(item.toLowerCase());
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                  setMobileOpen(false);
-                }}
-                style={{
-                  cursor: "pointer",
-                  fontSize: "1rem",
-                  fontWeight: "500",
-                  color: activeSection === item.toLowerCase() ? "#a855f7" : "#ccc"
-                }}
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </>
   );
